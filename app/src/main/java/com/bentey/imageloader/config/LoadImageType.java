@@ -1,4 +1,4 @@
-package com.bentey.imageloader.consant;
+package com.bentey.imageloader.config;
 
 /**
  * @author : bentey
@@ -9,4 +9,6 @@ public interface LoadImageType {
     String URL = "URL";
 
     String URI = "URI";
+
+    String BITMAP = "BITMAP";
 }

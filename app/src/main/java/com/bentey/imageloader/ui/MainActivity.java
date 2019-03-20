@@ -10,7 +10,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import com.bentey.imageloader.R;
 import com.bentey.imageloader.base.BaseActivity;
-import com.bentey.imageloader.consant.LoadImageType;
+import com.bentey.imageloader.config.LoadImageType;
 import com.bentey.imageloader.model.ImageInfo;
 
 public class MainActivity extends BaseActivity {
@@ -20,6 +20,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.btn_url) Button btnUrl;
     @BindView(R.id.btn_uri) Button btnUri;
+    @BindView(R.id.btn_bitmap) Button btnBitmap;
 
     @Override
     public int initView(@Nullable Bundle bundle) {
@@ -31,7 +32,7 @@ public class MainActivity extends BaseActivity {
         toolbar.setTitle("ImageLoader");
     }
 
-    @OnClick({ R.id.btn_url, R.id.btn_uri })
+    @OnClick({ R.id.btn_url, R.id.btn_uri, R.id.btn_bitmap })
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_url:
@@ -41,6 +42,11 @@ public class MainActivity extends BaseActivity {
             case R.id.btn_uri:
                 ImageShowDetailActivity.intent(this,
                     softData(LoadImageType.URI, null, parseResource(R.drawable.ic_keji)));
+                break;
+
+            case R.id.btn_bitmap:
+                ImageShowDetailActivity.intent(this,
+                    softData(LoadImageType.BITMAP, url, null));
                 break;
         }
     }

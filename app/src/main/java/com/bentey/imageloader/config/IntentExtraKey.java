@@ -1,4 +1,4 @@
-package com.bentey.imageloader.consant;
+package com.bentey.imageloader.config;
 
 /**
  * @author : bentey

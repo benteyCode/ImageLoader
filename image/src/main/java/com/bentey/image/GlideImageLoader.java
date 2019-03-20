@@ -2,15 +2,21 @@ package com.bentey.image;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.ImageView;
+import com.bentey.image.callback.ImageLoaderCallback;
+import com.bentey.image.exception.ContextNullException;
 import com.bentey.image.util.Util;
 import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
@@ -98,6 +104,72 @@ public class GlideImageLoader implements ILoader {
             .into(imageView);
     }
 
+    @Override
+    public void loadToBitmap(String url, final ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+        loadToBitmap(application, url, new ImageLoaderOption(), imageLoaderCallback);
+    }
+
+    @Override
+    public void loadToBitmap(Context context, String url, ImageLoaderOption imageLoaderOption,
+        final ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+        if (!Util.checkContextNull(context)) {
+            imageLoaderCallback.failure(new ContextNullException("context为null"));
+        }
+        final DrawableTypeRequest request = Glide.with(context).load(url);
+        applyOption(request, imageLoaderOption);
+        convertTypeRequest(url, request, imageLoaderOption);
+        request.asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource,
+                GlideAnimation<? super Bitmap> glideAnimation) {
+                if (imageLoaderCallback != null) {
+                    imageLoaderCallback.success(resource);
+                }
+            }
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                super.onLoadFailed(e, errorDrawable);
+                if (imageLoaderCallback != null) {
+                    imageLoaderCallback.failure(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void loadToBitmap(Fragment supportFragment, String url,
+        ImageLoaderOption imageLoaderOption, final ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+        if (!Util.checkFragmentNull(supportFragment)) {
+            imageLoaderCallback.failure(new ContextNullException("context为null"));
+        }
+        final DrawableTypeRequest request = Glide.with(supportFragment).load(url);
+        applyOption(request, imageLoaderOption);
+        convertTypeRequest(url, request, imageLoaderOption);
+        request.asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource,
+                GlideAnimation<? super Bitmap> glideAnimation) {
+                if (imageLoaderCallback != null) {
+                    imageLoaderCallback.success(resource);
+                }
+            }
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                super.onLoadFailed(e, errorDrawable);
+                if (imageLoaderCallback != null) {
+                    imageLoaderCallback.failure(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void clearAllMemoryCache() {
+        Glide.with(application).onLowMemory();
+    }
+
     private RequestManager getRequestManager(Context context, ImageView imageView) {
         RequestManager requestManager;
         if (context != null) {
@@ -156,9 +228,9 @@ public class GlideImageLoader implements ILoader {
     }
 
     private DrawableTypeRequest convertTypeRequest(String url, DrawableTypeRequest request,
-        ImageLoaderOption imageLoaderOptions) {
+        ImageLoaderOption imageLoaderOption) {
         if (!TextUtils.isEmpty(url) && url.contains(".gif")) {
-            request.diskCacheStrategy(imageLoaderOptions.isSkipDiskCache() ?
+            request.diskCacheStrategy(imageLoaderOption.isSkipDiskCache() ?
                 DiskCacheStrategy.NONE
                 : DiskCacheStrategy.SOURCE);
         }
