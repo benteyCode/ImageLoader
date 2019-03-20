@@ -7,4 +7,6 @@ package com.bentey.imageloader.consant;
 public interface LoadImageType {
 
     String URL = "URL";
+
+    String URI = "URI";
 }

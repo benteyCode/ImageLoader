@@ -54,6 +54,8 @@ public class ImageShowDetailActivity extends BaseActivity {
         if (LoadImageType.URL.equals(type)) {
             ImageLoader.load(imageInfo.getUrl(), image,
                 ImageLoaderOption.builder().setCircle(true).createOption());
+        } else if (LoadImageType.URI.equals(type)) {
+            ImageLoader.load(imageInfo.getUri(), image);
         }
     }
 }

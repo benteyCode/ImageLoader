@@ -2,6 +2,7 @@ package com.bentey.image.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 
@@ -27,5 +28,12 @@ public class Util {
             return false;
         }
         return true;
+    }
+
+    public static Uri parse(Uri raw) {
+        if (raw == null) {
+            return null;
+        }
+        return Uri.parse(raw.toString());
     }
 }

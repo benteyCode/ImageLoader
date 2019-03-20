@@ -2,6 +2,7 @@ package com.bentey.image;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.ImageView;
@@ -62,6 +63,38 @@ public class GlideImageLoader implements ILoader {
         applyOption(request, imageLoaderOption);
         convertTypeRequest(url, request, imageLoaderOption);
         request.dontAnimate()
+            .into(imageView);
+    }
+
+    @Override
+    public void load(Uri uri, ImageView imageView) {
+        if (imageView == null) {
+            return;
+        }
+        load(imageView.getContext(), uri, imageView, new ImageLoaderOption());
+    }
+
+    @Override
+    public void load(Context context, Uri uri, ImageView imageView,
+        ImageLoaderOption imageLoaderOption) {
+        if (imageView == null || !Util.checkContextNull(context)) {
+            return;
+        }
+        applyOption(getRequestManager(context, imageView).load(Util.parse(uri)),
+            imageLoaderOption)
+            .dontAnimate()
+            .into(imageView);
+    }
+
+    @Override
+    public void load(Fragment supportFragment, Uri uri, ImageView imageView,
+        ImageLoaderOption imageLoaderOption) {
+        if (imageView == null || !Util.checkFragmentNull(supportFragment)) {
+            return;
+        }
+        applyOption(getRequestManager(supportFragment, imageView).load(Util.parse(uri)),
+            imageLoaderOption)
+            .dontAnimate()
             .into(imageView);
     }
 

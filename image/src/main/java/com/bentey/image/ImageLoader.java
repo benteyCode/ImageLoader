@@ -1,6 +1,7 @@
 package com.bentey.image;
 
 import android.app.Application;
+import android.net.Uri;
 import android.widget.ImageView;
 
 /**
@@ -23,5 +24,13 @@ public class ImageLoader {
 
     public static void load(String url, ImageView imageView, ImageLoaderOption imageLoaderOptions) {
         iLoader.load(imageView.getContext(), url, imageView, imageLoaderOptions);
+    }
+
+    public static void load(Uri uri, ImageView imageView) {
+        iLoader.load(uri, imageView);
+    }
+
+    public static void load(Uri uri, ImageView imageView, ImageLoaderOption imageLoaderOptions) {
+        iLoader.load(imageView.getContext(), uri, imageView, imageLoaderOptions);
     }
 }

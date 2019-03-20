@@ -17,15 +17,29 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
+      android:weightSum="3"
       >
-
     <Button
         android:id="@+id/btn_url"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
         android:text="url"
         />
-
+    <Button
+        android:id="@+id/btn_uri"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_weight="1"
+        android:text="uri"
+        />
+    <Button
+        android:id="@+id/btn_3"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_weight="1"
+        android:text="url"
+        />
   </LinearLayout>
 
 </LinearLayout>

@@ -12,6 +12,8 @@ public class ImageInfo implements Serializable {
 
     public String url;
 
+    public String uri;
+
     public ImageInfo() {
     }
 
@@ -29,5 +31,13 @@ public class ImageInfo implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 }
