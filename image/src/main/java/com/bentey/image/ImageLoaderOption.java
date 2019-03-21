@@ -21,12 +21,14 @@ public class ImageLoaderOption {
     private boolean skipMemoryCache = false;
     private boolean skipDiskCache = false;
     private boolean circle = false;
+    private boolean animate = false;
 
     public ImageLoaderOption() {
     }
 
     private ImageLoaderOption(int placeHolder, int errorHolder, int resizeWidth, int resizeHeight,
-        int radius, boolean skipMemoryCache, boolean skipDiskCache, boolean circle) {
+        int radius, boolean skipMemoryCache, boolean skipDiskCache, boolean circle,
+        boolean animate) {
         this.placeHolder = placeHolder;
         this.errorHolder = errorHolder;
         this.resizeWidth = resizeWidth;
@@ -35,6 +37,7 @@ public class ImageLoaderOption {
         this.skipMemoryCache = skipMemoryCache;
         this.skipDiskCache = skipDiskCache;
         this.circle = circle;
+        this.animate = animate;
     }
 
     public int getPlaceHolder() {
@@ -69,6 +72,10 @@ public class ImageLoaderOption {
         return circle;
     }
 
+    public boolean isAnimate() {
+        return animate;
+    }
+
     public static ImageLoaderOptionBuilder builder() {
         return new ImageLoaderOptionBuilder();
     }
@@ -83,6 +90,7 @@ public class ImageLoaderOption {
         private boolean skipMemoryCache = false;
         private boolean skipDiskCache = false;
         private boolean circle = false;
+        private boolean animate = false;
 
         public ImageLoaderOptionBuilder setPlaceHolder(@DrawableRes int placeHolder) {
             this.placeHolder = placeHolder;
@@ -124,9 +132,14 @@ public class ImageLoaderOption {
             return this;
         }
 
+        public ImageLoaderOptionBuilder setAnimate(boolean animate) {
+            this.animate = animate;
+            return this;
+        }
+
         public ImageLoaderOption createOption() {
             return new ImageLoaderOption(placeHolder, errorHolder, resizeWidth, resizeHeight,
-                radius, skipMemoryCache, skipDiskCache, circle);
+                radius, skipMemoryCache, skipDiskCache, circle, animate);
         }
     }
 }

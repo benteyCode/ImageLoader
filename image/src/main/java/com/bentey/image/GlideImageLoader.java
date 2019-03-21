@@ -2,22 +2,23 @@ package com.bentey.image;
 
 import android.app.Application;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import com.bentey.image.callback.ImageLoaderCallback;
-import com.bentey.image.exception.ContextNullException;
 import com.bentey.image.util.Util;
-import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.bentey.image.ImageLoaderOption.INVALID_VALUE;
@@ -25,7 +26,7 @@ import static com.bentey.image.ImageLoaderOption.INVALID_VALUE;
 /**
  * 注意：
  * 1)ImageView尽量设置固定的宽高，如果在xml中ImageView的宽高设置为wrap_content，图片会根据scaleType和屏幕尺寸像素放大或缩小到一定的尺寸缓存到disk memory中，而不是ImageView的实际大小
- * 2)尽量传Activity或者Fragment，Glide会监听activity、fragment的生命周期去启动、停止请求，如果是与页面无关的后台下载动作则用Application的Context
+ * 2)尽量传Activity或者Fragment，Glide会监听activity、fragment的生命周期去启动、停止请求
  *
  * @author : bentey
  * @date : 2019/3/19
@@ -34,6 +35,27 @@ import static com.bentey.image.ImageLoaderOption.INVALID_VALUE;
 public class GlideImageLoader implements ILoader {
 
     Application application;
+    private static ImageLoaderCallback<Drawable> mImageLoaderCallback;
+
+    private static RequestListener<Drawable> mRequestListener = new RequestListener<Drawable>() {
+        @Override
+        public boolean onLoadFailed(@Nullable GlideException e, Object model,
+            Target<Drawable> target, boolean isFirstResource) {
+            if (mImageLoaderCallback != null) {
+                mImageLoaderCallback.failure(e);
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target,
+            DataSource dataSource, boolean isFirstResource) {
+            if (mImageLoaderCallback != null) {
+                mImageLoaderCallback.success(resource);
+            }
+            return false;
+        }
+    };
 
     public GlideImageLoader(Application application) {
         this.application = application;
@@ -53,10 +75,10 @@ public class GlideImageLoader implements ILoader {
         if (imageView == null || !Util.checkContextNull(context)) {
             return;
         }
-        DrawableTypeRequest request = getRequestManager(context, imageView).load(url);
-        applyOption(request, imageLoaderOption);
-        convertTypeRequest(url, request, imageLoaderOption);
-        request.dontAnimate().into(imageView);
+        RequestBuilder<Drawable> requestBuilder = getRequestManager(context, imageView).load(url);
+        applyOption(requestBuilder, imageLoaderOption);
+        convertTypeRequest(url, requestBuilder, imageLoaderOption);
+        requestBuilder.into(imageView);
     }
 
     @Override
@@ -65,11 +87,11 @@ public class GlideImageLoader implements ILoader {
         if (imageView == null || !Util.checkFragmentNull(supportFragment)) {
             return;
         }
-        DrawableTypeRequest request = getRequestManager(supportFragment, imageView).load(url);
-        applyOption(request, imageLoaderOption);
-        convertTypeRequest(url, request, imageLoaderOption);
-        request.dontAnimate()
-            .into(imageView);
+        RequestBuilder<Drawable> requestBuilder =
+            getRequestManager(supportFragment, imageView).load(url);
+        applyOption(requestBuilder, imageLoaderOption);
+        convertTypeRequest(url, requestBuilder, imageLoaderOption);
+        requestBuilder.into(imageView);
     }
 
     @Override
@@ -88,7 +110,6 @@ public class GlideImageLoader implements ILoader {
         }
         applyOption(getRequestManager(context, imageView).load(Util.parse(uri)),
             imageLoaderOption)
-            .dontAnimate()
             .into(imageView);
     }
 
@@ -100,74 +121,39 @@ public class GlideImageLoader implements ILoader {
         }
         applyOption(getRequestManager(supportFragment, imageView).load(Util.parse(uri)),
             imageLoaderOption)
-            .dontAnimate()
             .into(imageView);
     }
 
     @Override
-    public void loadToBitmap(String url, final ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+    public void loadToBitmap(String url, final ImageLoaderCallback<Drawable> imageLoaderCallback) {
         loadToBitmap(application, url, new ImageLoaderOption(), imageLoaderCallback);
     }
 
     @Override
     public void loadToBitmap(Context context, String url, ImageLoaderOption imageLoaderOption,
-        final ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+        ImageLoaderCallback<Drawable> imageLoaderCallback) {
         if (!Util.checkContextNull(context)) {
-            imageLoaderCallback.failure(new ContextNullException("context为null"));
+            return;
         }
-        final DrawableTypeRequest request = Glide.with(context).load(url);
-        applyOption(request, imageLoaderOption);
-        convertTypeRequest(url, request, imageLoaderOption);
-        request.asBitmap().into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap resource,
-                GlideAnimation<? super Bitmap> glideAnimation) {
-                if (imageLoaderCallback != null) {
-                    imageLoaderCallback.success(resource);
-                }
-            }
-
-            @Override
-            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                super.onLoadFailed(e, errorDrawable);
-                if (imageLoaderCallback != null) {
-                    imageLoaderCallback.failure(e);
-                }
-            }
-        });
+        this.mImageLoaderCallback = imageLoaderCallback;
+        RequestBuilder<Drawable> requestBuilder = Glide.with(context).load(url);
+        applyOption(requestBuilder, imageLoaderOption);
+        convertTypeRequest(url, requestBuilder, imageLoaderOption);
+        requestBuilder.listener(mRequestListener);
     }
 
     @Override
     public void loadToBitmap(Fragment supportFragment, String url,
-        ImageLoaderOption imageLoaderOption, final ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+        ImageLoaderOption imageLoaderOption,
+        ImageLoaderCallback<Drawable> imageLoaderCallback) {
         if (!Util.checkFragmentNull(supportFragment)) {
-            imageLoaderCallback.failure(new ContextNullException("context为null"));
+            return;
         }
-        final DrawableTypeRequest request = Glide.with(supportFragment).load(url);
-        applyOption(request, imageLoaderOption);
-        convertTypeRequest(url, request, imageLoaderOption);
-        request.asBitmap().into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(Bitmap resource,
-                GlideAnimation<? super Bitmap> glideAnimation) {
-                if (imageLoaderCallback != null) {
-                    imageLoaderCallback.success(resource);
-                }
-            }
-
-            @Override
-            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                super.onLoadFailed(e, errorDrawable);
-                if (imageLoaderCallback != null) {
-                    imageLoaderCallback.failure(e);
-                }
-            }
-        });
-    }
-
-    @Override
-    public void clearAllMemoryCache() {
-        Glide.with(application).onLowMemory();
+        this.mImageLoaderCallback = imageLoaderCallback;
+        RequestBuilder<Drawable> requestBuilder = Glide.with(supportFragment).load(url);
+        applyOption(requestBuilder, imageLoaderOption);
+        convertTypeRequest(url, requestBuilder, imageLoaderOption);
+        requestBuilder.listener(mRequestListener);
     }
 
     private RequestManager getRequestManager(Context context, ImageView imageView) {
@@ -198,42 +184,50 @@ public class GlideImageLoader implements ILoader {
         return requestManager;
     }
 
-    private DrawableTypeRequest applyOption(DrawableTypeRequest request,
+    private RequestBuilder<Drawable> applyOption(RequestBuilder<Drawable> requestBuilder,
         ImageLoaderOption imageLoaderOption) {
-        if (request == null || imageLoaderOption == null) {
-            return request;
+        if (requestBuilder == null || imageLoaderOption == null) {
+            return requestBuilder;
         }
+
+        RequestOptions requestOptions = new RequestOptions();
         if (imageLoaderOption.getPlaceHolder() != INVALID_VALUE) {
-            request.placeholder(imageLoaderOption.getPlaceHolder());
+            requestOptions.placeholder(imageLoaderOption.getPlaceHolder());
         }
         if (imageLoaderOption.getErrorHolder() != INVALID_VALUE) {
-            request.error(imageLoaderOption.getErrorHolder());
+            requestOptions.error(imageLoaderOption.getErrorHolder());
         }
         if (imageLoaderOption.getResizeWidth() != INVALID_VALUE
             && imageLoaderOption.getResizeHeight() != INVALID_VALUE) {
-            request.override(imageLoaderOption.getResizeWidth(),
+            requestOptions.override(imageLoaderOption.getResizeWidth(),
                 imageLoaderOption.getResizeHeight());
         }
-        request.skipMemoryCache(imageLoaderOption.isSkipMemoryCache())
-            .diskCacheStrategy(imageLoaderOption.isSkipDiskCache() ?
-                DiskCacheStrategy.NONE : DiskCacheStrategy.RESULT);
-        if (imageLoaderOption.isCircle()) {
-            request.bitmapTransform(new CropCircleTransformation(application));
-        }
         if (imageLoaderOption.getRadius() != INVALID_VALUE) {
-            request.bitmapTransform(
-                new RoundedCornersTransformation(application, imageLoaderOption.getRadius(), 0));
+            requestOptions.bitmapTransform(
+                new RoundedCornersTransformation(imageLoaderOption.getRadius(), 0));
         }
-        return request;
+        requestOptions.skipMemoryCache(imageLoaderOption.isSkipMemoryCache())
+            .diskCacheStrategy(imageLoaderOption.isSkipDiskCache() ?
+                DiskCacheStrategy.NONE : DiskCacheStrategy.DATA);
+        if (imageLoaderOption.isCircle()) {
+            requestOptions.circleCrop();
+        }
+        if (!imageLoaderOption.isAnimate()) {
+            requestOptions.dontAnimate();
+        }
+
+        return requestBuilder.apply(requestOptions);
     }
 
-    private DrawableTypeRequest convertTypeRequest(String url, DrawableTypeRequest request,
+    private RequestBuilder<Drawable> convertTypeRequest(String url,
+        RequestBuilder<Drawable> requestBuilder,
         ImageLoaderOption imageLoaderOption) {
+        RequestOptions requestOptions = new RequestOptions();
         if (!TextUtils.isEmpty(url) && url.contains(".gif")) {
-            request.diskCacheStrategy(imageLoaderOption.isSkipDiskCache() ?
-                DiskCacheStrategy.NONE
-                : DiskCacheStrategy.SOURCE);
+            requestOptions =
+                new RequestOptions().diskCacheStrategy(imageLoaderOption.isSkipDiskCache() ?
+                    DiskCacheStrategy.NONE : DiskCacheStrategy.DATA);
         }
-        return request;
+        return requestBuilder.apply(requestOptions);
     }
 }

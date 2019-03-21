@@ -2,6 +2,7 @@ package com.bentey.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.widget.ImageView;
@@ -28,13 +29,12 @@ public interface ILoader {
     void load(Fragment supportFragment, Uri uri, ImageView imageView,
         ImageLoaderOption imageLoaderOption);
 
-    void loadToBitmap(String url, ImageLoaderCallback<Bitmap> imageLoaderCallback);
+    void loadToBitmap(String url, ImageLoaderCallback<Drawable> imageLoaderCallback);
 
     void loadToBitmap(Context context, String url, ImageLoaderOption imageLoaderOption,
-        ImageLoaderCallback<Bitmap> imageLoaderCallback);
+        ImageLoaderCallback<Drawable> imageLoaderCallback);
 
     void loadToBitmap(Fragment supportFragment, String url, ImageLoaderOption imageLoaderOption,
-        ImageLoaderCallback<Bitmap> imageLoaderCallback);
+        ImageLoaderCallback<Drawable> imageLoaderCallback);
 
-    void clearAllMemoryCache();
 }

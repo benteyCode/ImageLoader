@@ -24,6 +24,7 @@ dependencies {
   implementation rootProject.ext.dependencies["appcompat-v7"]
 
   implementation rootProject.ext.dependencies["glide"]
+  annotationProcessor rootProject.ext.dependencies["glide-compiler"]
   implementation rootProject.ext.dependencies["okhttp"]
   implementation rootProject.ext.dependencies["okhttp-urlconnection"]
   implementation rootProject.ext.dependencies["glide-transformations"]

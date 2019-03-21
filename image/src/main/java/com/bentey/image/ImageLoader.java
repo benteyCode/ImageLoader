@@ -2,7 +2,7 @@ package com.bentey.image;
 
 import android.app.Application;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 import com.bentey.image.callback.ImageLoaderCallback;
@@ -39,17 +39,13 @@ public class ImageLoader {
         iLoader.load(context, uri, imageView, imageLoaderOption);
     }
 
-    public static void loadToBitmap(String url, ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+    public static void loadToBitmap(String url, ImageLoaderCallback<Drawable> imageLoaderCallback) {
         iLoader.loadToBitmap(url, imageLoaderCallback);
     }
 
     public static void loadToBitmap(Context context, String url,
         ImageLoaderOption imageLoaderOption,
-        ImageLoaderCallback<Bitmap> imageLoaderCallback) {
+        ImageLoaderCallback<Drawable> imageLoaderCallback) {
         iLoader.loadToBitmap(context, url, imageLoaderOption, imageLoaderCallback);
-    }
-
-    public void clearAllMemoryCache() {
-        iLoader.clearAllMemoryCache();
     }
 }

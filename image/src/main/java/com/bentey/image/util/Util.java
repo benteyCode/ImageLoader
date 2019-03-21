@@ -24,10 +24,7 @@ public class Util {
     }
 
     public static boolean checkFragmentNull(Fragment fragment) {
-        if (fragment != null && (fragment.getActivity() == null || fragment.isDetached())) {
-            return false;
-        }
-        return true;
+        return fragment == null || (fragment.getActivity() != null && !fragment.isDetached());
     }
 
     public static Uri parse(Uri raw) {

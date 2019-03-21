@@ -2,12 +2,12 @@ package com.bentey.imageloader.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 import butterknife.BindView;
 import com.bentey.image.ImageLoader;
 import com.bentey.image.ImageLoaderOption;
@@ -63,17 +63,15 @@ public class ImageShowDetailActivity extends BaseActivity {
         } else if (LoadImageType.BITMAP.equals(type)) {
             ImageLoader.loadToBitmap(this, imageInfo.getUrl(),
                 ImageLoaderOption.builder().setCircle(true).createOption(),
-                new ImageLoaderCallback<Bitmap>() {
+                new ImageLoaderCallback<Drawable>() {
                     @Override
-                    public void success(Bitmap resource) {
-                        // TODO: 2019/3/20
-                        Toast.makeText(ImageShowDetailActivity.this, "success", Toast.LENGTH_SHORT)
-                            .show();
+                    public void success(Drawable resource) {
+                        Log.d(TAG, "success: " + resource);
                     }
 
                     @Override
                     public void failure(Exception e) {
-
+                        Log.d(TAG, "failure: " + e.toString());
                     }
                 });
         }
