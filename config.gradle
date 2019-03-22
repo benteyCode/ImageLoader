@@ -30,7 +30,7 @@ ext {
          //glide
          "glide"                    : "com.github.bumptech.glide:glide:${version["glideVersion"]}",
          "glide-compiler"           : "com.github.bumptech.glide:compiler:${version["glideVersion"]}",
-         "okhttp3-integration"      : "com.github.bumptech.glide:okhttp3-integration:4.3.1",
+         "okhttp3-integration"      : "com.github.bumptech.glide:okhttp3-integration:${version["glideVersion"]}",
          "okhttp"                   : "com.squareup.okhttp3:okhttp:3.10.0",
          "okhttp-urlconnection"     : "com.squareup.okhttp3:okhttp-urlconnection:3.10.0",
          //对图片进行裁剪、模糊、滤镜等处理

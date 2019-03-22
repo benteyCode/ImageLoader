@@ -1,5 +1,6 @@
 package com.bentey.imageloader.model;
 
+import android.support.annotation.DrawableRes;
 import java.io.Serializable;
 
 /**
@@ -12,7 +13,7 @@ public class ImageInfo implements Serializable {
 
     public String url;
 
-    public String uri;
+    public @DrawableRes int resourceId;
 
     public ImageInfo() {
     }
@@ -33,11 +34,11 @@ public class ImageInfo implements Serializable {
         this.url = url;
     }
 
-    public String getUri() {
-        return uri;
+    public int getResourceId() {
+        return resourceId;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
     }
 }

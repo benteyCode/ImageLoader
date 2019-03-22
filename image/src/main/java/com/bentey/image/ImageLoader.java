@@ -2,10 +2,9 @@ package com.bentey.image;
 
 import android.app.Application;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
-import com.bentey.image.callback.ImageLoaderCallback;
+import com.bentey.image.option.ImageRequestOptions;
 
 /**
  * Initialize the SDK {@link ImageLoader#init(Application)}
@@ -26,26 +25,16 @@ public class ImageLoader {
     }
 
     public static void load(Context context, String url, ImageView imageView,
-        ImageLoaderOption imageLoaderOption) {
-        iLoader.load(context, url, imageView, imageLoaderOption);
+        ImageRequestOptions imageRequestOptions) {
+        iLoader.load(context, url, imageView, imageRequestOptions);
     }
 
-    public static void load(Uri uri, ImageView imageView) {
-        iLoader.load(uri, imageView);
+    public static void load(@DrawableRes int resourceId, ImageView imageView) {
+        iLoader.load(resourceId, imageView);
     }
 
-    public static void load(Context context, Uri uri, ImageView imageView,
-        ImageLoaderOption imageLoaderOption) {
-        iLoader.load(context, uri, imageView, imageLoaderOption);
-    }
-
-    public static void loadToBitmap(String url, ImageLoaderCallback<Drawable> imageLoaderCallback) {
-        iLoader.loadToBitmap(url, imageLoaderCallback);
-    }
-
-    public static void loadToBitmap(Context context, String url,
-        ImageLoaderOption imageLoaderOption,
-        ImageLoaderCallback<Drawable> imageLoaderCallback) {
-        iLoader.loadToBitmap(context, url, imageLoaderOption, imageLoaderCallback);
+    public static void load(Context context, @DrawableRes int resourceId, ImageView imageView,
+        ImageRequestOptions imageRequestOptions) {
+        iLoader.load(context, resourceId, imageView, imageRequestOptions);
     }
 }

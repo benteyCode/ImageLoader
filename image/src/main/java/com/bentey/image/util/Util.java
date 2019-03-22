@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.DrawableRes;
 import android.support.v4.app.Fragment;
 
 /**
@@ -11,6 +12,10 @@ import android.support.v4.app.Fragment;
  * @date : 2019/3/19
  */
 public class Util {
+
+    private static final String ANDROID_RESOURCE = "android.resource://";
+    private static final String SEPARATOR = "/";
+    private static final String FILE = "file://";
 
     public static boolean checkContextNull(Context context) {
         if (context != null && context instanceof Activity) {
@@ -27,10 +32,7 @@ public class Util {
         return fragment == null || (fragment.getActivity() != null && !fragment.isDetached());
     }
 
-    public static Uri parse(Uri raw) {
-        if (raw == null) {
-            return null;
-        }
-        return Uri.parse(raw.toString());
+    public static Uri resourceId2Uri(Context context, @DrawableRes int resourceId) {
+        return Uri.parse(ANDROID_RESOURCE + context.getPackageName() + SEPARATOR + resourceId);
     }
 }

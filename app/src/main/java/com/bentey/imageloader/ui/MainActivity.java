@@ -1,7 +1,7 @@
 package com.bentey.imageloader.ui;
 
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -36,36 +36,26 @@ public class MainActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_url:
-                ImageShowDetailActivity.intent(this, softData(LoadImageType.URL, url, null));
+                ImageShowDetailActivity.intent(this, softData(LoadImageType.URL, url, -1));
                 break;
 
             case R.id.btn_uri:
                 ImageShowDetailActivity.intent(this,
-                    softData(LoadImageType.URI, null, parseResource(R.drawable.ic_keji)));
+                    softData(LoadImageType.URI, null, R.drawable.ic_keji));
                 break;
 
             case R.id.btn_bitmap:
                 ImageShowDetailActivity.intent(this,
-                    softData(LoadImageType.BITMAP, url, null));
+                    softData(LoadImageType.BITMAP, url, -1));
                 break;
         }
     }
 
-    private ImageInfo softData(String type, String url, Uri uri) {
+    private ImageInfo softData(String type, String url, @DrawableRes int resourceId) {
         ImageInfo imageInfo = new ImageInfo();
         imageInfo.setType(type);
         imageInfo.setUrl(url);
-        if (uri != null) {
-            imageInfo.setUri(uri.toString());
-        }
+        imageInfo.setResourceId(resourceId);
         return imageInfo;
-    }
-
-    public Uri parseResource(int resId) {
-        Uri uri = Uri.parse("android.resource://"
-            + getApplicationContext().getPackageName()
-            + "/"
-            + resId);
-        return uri;
     }
 }

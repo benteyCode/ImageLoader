@@ -2,16 +2,12 @@ package com.bentey.imageloader.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.ImageView;
 import butterknife.BindView;
 import com.bentey.image.ImageLoader;
-import com.bentey.image.ImageLoaderOption;
-import com.bentey.image.callback.ImageLoaderCallback;
+import com.bentey.image.option.ImageRequestOptions;
 import com.bentey.imageloader.R;
 import com.bentey.imageloader.base.BaseActivity;
 import com.bentey.imageloader.config.IntentExtraKey;
@@ -57,23 +53,11 @@ public class ImageShowDetailActivity extends BaseActivity {
         String type = imageInfo.getType();
         if (LoadImageType.URL.equals(type)) {
             ImageLoader.load(this, imageInfo.getUrl(), image,
-                ImageLoaderOption.builder().setCircle(true).createOption());
+                ImageRequestOptions.builder().createOption());
         } else if (LoadImageType.URI.equals(type)) {
-            ImageLoader.load(Uri.parse(imageInfo.getUri()), image);
+            ImageLoader.load(imageInfo.getResourceId(), image);
         } else if (LoadImageType.BITMAP.equals(type)) {
-            ImageLoader.loadToBitmap(this, imageInfo.getUrl(),
-                ImageLoaderOption.builder().setCircle(true).createOption(),
-                new ImageLoaderCallback<Drawable>() {
-                    @Override
-                    public void success(Drawable resource) {
-                        Log.d(TAG, "success: " + resource);
-                    }
 
-                    @Override
-                    public void failure(Exception e) {
-                        Log.d(TAG, "failure: " + e.toString());
-                    }
-                });
         }
     }
 }
