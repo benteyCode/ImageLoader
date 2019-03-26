@@ -1,9 +1,13 @@
 package com.bentey.image.option;
 
+import android.graphics.Bitmap;
+import com.bumptech.glide.load.Transformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 /**
  * 加载图片可选配置
  * placeholder, error, fallback, centerCrop, fitCenter,
- * diskCacheStrategy, dontAnimate, dontTransform
+ * diskCacheStrategy, dontAnimate, dontTransform，strategy, transformation, circle
  *
  * @author : bentey
  * @date : 2019/3/22
@@ -17,25 +21,29 @@ public class ImageRequestOptions {
     private int radius = DEFAULT_VALUE;
     private boolean centerCrop = false;
     private boolean fitCenter = false;
-    private boolean diskCacheStrategy = false;
     private boolean dontAnimate = false;
     private boolean dontTransform = false;
+    private DiskCacheStrategy strategy = null;
+    private Transformation<Bitmap> transformation = null;
+    private boolean circle = false;
 
     public ImageRequestOptions() {
     }
 
     public ImageRequestOptions(int placeholder, int error, int fallback, int radius,
-        boolean centerCrop, boolean fitCenter, boolean diskCacheStrategy,
-        boolean dontAnimate, boolean dontTransform) {
+        boolean centerCrop, boolean fitCenter, boolean dontAnimate, boolean dontTransform,
+        DiskCacheStrategy strategy, Transformation<Bitmap> transformation, boolean circle) {
         this.placeholder = placeholder;
         this.error = error;
         this.fallback = fallback;
         this.radius = radius;
         this.centerCrop = centerCrop;
         this.fitCenter = fitCenter;
-        this.diskCacheStrategy = diskCacheStrategy;
         this.dontAnimate = dontAnimate;
         this.dontTransform = dontTransform;
+        this.strategy = strategy;
+        this.transformation = transformation;
+        this.circle = circle;
     }
 
     public static int getDefaultValue() {
@@ -66,16 +74,24 @@ public class ImageRequestOptions {
         return fitCenter;
     }
 
-    public boolean isDiskCacheStrategy() {
-        return diskCacheStrategy;
-    }
-
     public boolean isDontAnimate() {
         return dontAnimate;
     }
 
     public boolean isDontTransform() {
         return dontTransform;
+    }
+
+    public DiskCacheStrategy getStrategy() {
+        return strategy;
+    }
+
+    public boolean isCircle() {
+        return circle;
+    }
+
+    public Transformation<Bitmap> getTransformation() {
+        return transformation;
     }
 
     public static Builder builder() {
@@ -89,9 +105,11 @@ public class ImageRequestOptions {
         private int radius = DEFAULT_VALUE;
         private boolean centerCrop = false;
         private boolean fitCenter = false;
-        private boolean diskCacheStrategy = false;
         private boolean dontAnimate = false;
         private boolean dontTransform = false;
+        private DiskCacheStrategy strategy = null;
+        private Transformation<Bitmap> transformation = null;
+        private boolean circle = false;
 
         public Builder setPlaceholder(int placeholder) {
             this.placeholder = placeholder;
@@ -123,11 +141,6 @@ public class ImageRequestOptions {
             return this;
         }
 
-        public Builder setDiskCacheStrategy(boolean diskCacheStrategy) {
-            this.diskCacheStrategy = diskCacheStrategy;
-            return this;
-        }
-
         public Builder setDontAnimate(boolean dontAnimate) {
             this.dontAnimate = dontAnimate;
             return this;
@@ -138,9 +151,24 @@ public class ImageRequestOptions {
             return this;
         }
 
+        public Builder setStrategy(DiskCacheStrategy strategy) {
+            this.strategy = strategy;
+            return this;
+        }
+
+        public Builder setTransformation(Transformation<Bitmap> transformation) {
+            this.transformation = transformation;
+            return this;
+        }
+
+        public Builder setCircle(boolean circle) {
+            this.circle = circle;
+            return this;
+        }
+
         public ImageRequestOptions createOption() {
             return new ImageRequestOptions(placeholder, error, fallback, radius, centerCrop,
-                fitCenter, diskCacheStrategy, dontAnimate, dontTransform);
+                fitCenter, dontAnimate, dontTransform, strategy, transformation, circle);
         }
     }
 }

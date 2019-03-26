@@ -3,6 +3,7 @@ package com.bentey.image;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
+import android.support.v4.app.Fragment;
 import android.widget.ImageView;
 import com.bentey.image.option.ImageRequestOptions;
 
@@ -29,6 +30,11 @@ public class ImageLoader {
         iLoader.load(context, url, imageView, imageRequestOptions);
     }
 
+    public static void load(Fragment supportFragment, String url, ImageView imageView,
+        ImageRequestOptions imageRequestOptions) {
+        iLoader.load(supportFragment, url, imageView, imageRequestOptions);
+    }
+
     public static void load(@DrawableRes int resourceId, ImageView imageView) {
         iLoader.load(resourceId, imageView);
     }
@@ -36,5 +42,11 @@ public class ImageLoader {
     public static void load(Context context, @DrawableRes int resourceId, ImageView imageView,
         ImageRequestOptions imageRequestOptions) {
         iLoader.load(context, resourceId, imageView, imageRequestOptions);
+    }
+
+    public static void load(Fragment supportFragment, @DrawableRes int resourceId,
+        ImageView imageView,
+        ImageRequestOptions imageRequestOptions) {
+        iLoader.load(supportFragment, resourceId, imageView, imageRequestOptions);
     }
 }

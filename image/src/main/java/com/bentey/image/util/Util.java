@@ -35,4 +35,12 @@ public class Util {
     public static Uri resourceId2Uri(Context context, @DrawableRes int resourceId) {
         return Uri.parse(ANDROID_RESOURCE + context.getPackageName() + SEPARATOR + resourceId);
     }
+
+    public static int dp2px(Context context, float dp) {
+        return (int) (getDensity(context) * dp + 0.5f);
+    }
+
+    public static float getDensity(Context context) {
+        return context.getResources().getDisplayMetrics().density;
+    }
 }
